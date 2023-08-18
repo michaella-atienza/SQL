@@ -1,0 +1,40 @@
+--Create a cafe menu database
+
+CREATE TABLE cafe_menu
+( id INTEGER PRIMARY KEY, 
+item_name TEXT, 
+description TEXT, 
+item_type TEXT,
+cost INTEGER); 
+
+INSERT INTO cafe_menu VALUES
+(1, 'Americano', 'espresso and water', 'drink', 3), 
+(2, 'Cold Brew', 'rich, cold-steeped coffee', 'drink',2),
+(3, 'Mocha', 'Espresso, Chocolate, and Milk', 'drink',4), 
+(4, 'Pain au chocolat', 'Buttery croissant with rich dark chocolate', 'food', 3),
+(5, 'Seasonal Tart', 'Saskatoon Berry, Peach, or Strawberry fresh from the farm','food', 3),
+(6, 'Bruschetta', 'Fresh tomatoes on garlic-kissed toast with Modena balsamic glaze. Sourdough or Rye', 'food', 4),
+(7, 'Mediterranian Panini', 'Grilled eggplant, squash, tomato, mozarella, and basil.', 'food', 5),
+(8, 'Hot Chocolate', 'Perfect for kids and kids at heart. ', 'drink', 3),
+(9, 'Cappucino', 'Milk foam and espresso. Only served before lunch.', 'drink', 3),
+(10, 'Canele', 'Exported from Bordeaux', 'food', 3),
+(11, 'S. Pellegrino', 'Blood Orange, Lemon, or Pomegranate', 'drink', 2),
+(12, 'Brownies', 'The richest, chocolatiest brownies you will ever have in your life. Vegan option available', 'food', 3),
+(13, 'Macaron', 'We definitely did not have a hard time making them.', 'food', 1),
+(14, 'Mini-cuterie', 'Small board to share with a friend. Brie, cheddar, smoked gouda, prosciutto, iberico ham, crackers, and fig jam', 'food', 8),
+(15, 'London Fog', 'Earl grey latte with lavender. Made in Vancouver, not London.', 'drink', 3)
+;
+
+-- display database ordered by item_type then cost
+SELECT * FROM cafe_menu
+ORDER BY item_type, cost;
+
+--Average cost for each item type, rounded to two decimal places
+SELECT item_type, ROUND(AVG(cost),2) as average_cost
+FROM cafe_menu
+GROUP BY item_type;
+
+--Cheapest to Most expensive items
+SELECT item_name, cost 
+FROM cafe_menu
+ORDER BY COST ;
