@@ -1,0 +1,67 @@
+-- Fun project on the top 8 startup frauds
+-- Source: https://www.cbinsights.com/research/biggest-startup-frauds/#:~:text=1.,blood%20tests%20that%20never%20existed&text=Failed%20blood%2Dtesting%20startup%20Theranos,biggest%20startup%20frauds%20ever%20perpetuated.
+--NOTE : Some of these companies had two founders, but for the purpose of this project I kept it to the first one that appeared. 
+
+CREATE TABLE persons (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fullname TEXT,
+    birth_year INTEGER);
+    
+INSERT INTO persons (fullname, birth_year) VALUES ("Elizabeth Holmes", "1984"),
+("Parker Conrad", "1980"),
+("Jessica Alba", "1981"), 
+("Rishi Shah", "1986"),
+("Renaud Laplanche", "1970"), 
+('Michael Liberty', '1963'), 
+('Josh Tetrick', '1980'), 
+('Shervin Pishevar', '1974'); 
+
+
+CREATE TABLE startups (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    person_id INTEGER, 
+    name TEXT,
+    total_funding INTEGER,
+    year_founded INTEGER);
+    
+INSERT INTO startups (person_id, name, total_funding, year_founded) VALUES
+
+
+("1", "Theranos", '1100000000', '2003'),
+("2", "Zenefits", '584000000', '2013'),
+("3", "The Honest Company", '490000000', '2012'),
+ ("4", "Outcome Health", '490000000', '2006'), 
+ ("5", "LendingClub", '263000000', '2006'), 
+ ("6", "Mozido", '314000000', '2008'),
+ ("7", "Hampton Creek", '240000000', '2011'), 
+ ("8", "Virgin Hyperloop One", '472000000', '2014');
+
+
+SELECT * FROM persons;
+SELECT * FROM startups;
+
+-- Match founder to startups
+SELECT persons.fullname, startups.name AS company_name, startups.year_founded
+FROM persons
+JOIN startups
+ON persons.id =startups.person_id; 
+
+-- Person Age at Start of Company 
+SELECT persons.fullname, persons.birth_year, startups.year_founded, (startups.year_founded - persons.birth_year) as founder_age
+FROM persons
+JOIN startups
+ON persons.id =startups.person_id; 
+
+-- year founded and money
+-- 2000 - 2005, 2005 - 2010, 2010 - 2015 
+SELECT  
+ CASE 
+        WHEN year_founded > 2000 AND year_founded <= 2005 THEN '2000 - 2005'
+        WHEN year_founded > 2005 AND year_founded <= 2010 THEN '2005 - 2010' 
+        WHEN year_founded > 2010 AND year_founded <= 2015 THEN '2010 - 2015'
+        ELSE 'NULL'
+    END as 'period',
+ROUND(AVG(total_funding))
+ from startups
+ GROUP BY period
+ ORDER BY period;
