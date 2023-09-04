@@ -115,4 +115,20 @@ AND COALESCE(FebSales.orderID,
  FebSales.price,
  FebSales.orderdate,
  FebSales.location) IS NOT NULL;
- 
+
+--List all the products sold in Los Angeles in February, and include how many of each were sold.
+SELECT FebSales.Product, SUM(FebSales.Quantity)as amt_sold
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.FebSales
+ON customers.order_id = FebSales.orderID
+WHERE LENGTH(order_id) = 6
+AND FebSales.location like '%Los Angeles%'
+AND order_id <> 'Order ID'
+AND COALESCE(FebSales.orderID,
+ FebSales.Product, 
+ FebSales.Quantity,
+ FebSales.price,
+ FebSales.orderdate,
+ FebSales.location) IS NOT NULL
+GROUP BY FebSales.Product
+ORDER BY amt_sold DESC;
