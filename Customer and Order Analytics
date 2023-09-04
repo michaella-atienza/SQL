@@ -1,0 +1,118 @@
+
+--orderID returns as a similar column 
+
+-- cleaning data, 6 char long
+SELECT * FROM BIT_DB.customers
+WHERE LENGTH(order_id) = 6
+AND order_id <> 'Order ID';
+
+-- How many orders were placed in January? 
+SELECT COUNT(*) as January_Orders 
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.JanSales
+ON customers.order_id = JanSales.orderID
+WHERE LENGTH(order_id) = 6
+AND order_id <> 'Order ID'
+AND COALESCE(JanSales.orderID,
+ JanSales.Product, 
+ JanSales.Quantity,
+ JanSales.price,
+ JanSales.orderdate,
+ JanSales.location) IS NOT NULL;
+
+
+-- How many of those orders were for an iPhone?
+SELECT COUNT(*) as iPhone_orders
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.JanSales
+ON customers.order_id = JanSales.orderID
+WHERE LENGTH(order_id) = 6
+AND order_id <> 'Order ID'
+AND JanSales.Product = 'iPhone'
+AND COALESCE(JanSales.orderID,
+ JanSales.Product, 
+ JanSales.Quantity,
+ JanSales.price,
+ JanSales.orderdate,
+ JanSales.location) IS NOT NULL;
+ 
+-- Customer account numbers for all February orders
+SELECT DISTINCT(acctnum)
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.FebSales
+ON customers.order_id = FebSales.orderID
+WHERE LENGTH(order_id) = 6
+AND order_id <> 'Order ID'
+AND COALESCE(FebSales.orderID,
+ FebSales.Product, 
+ FebSales.Quantity,
+ FebSales.price,
+ FebSales.orderdate,
+ FebSales.location) IS NOT NULL;
+ 
+-- Cheapest Product sold in January and its Price
+SELECT JanSales.Product, JanSales.price
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.JanSales
+ON customers.order_id = JanSales.orderID
+WHERE LENGTH(order_id) = 6
+AND order_id <> 'Order ID'
+AND COALESCE(JanSales.orderID,
+ JanSales.Product, 
+ JanSales.Quantity,
+ JanSales.price,
+ JanSales.orderdate,
+ JanSales.location) IS NOT NULL
+ORDER BY price ASC
+LIMIT 1;
+
+-- What is the total revenue for each product sold in January? 
+--(Revenue calculated as number of products sold and the price of the products)
+-- Comment: Unsure why not all returning as a decimal
+SELECT JanSales.Product, ROUND(SUM(CAST(JanSales.price AS DECIMAL(10,2))), 2) as Revenue
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.JanSales
+ON customers.order_id = JanSales.orderID
+WHERE LENGTH(order_id) = 6
+AND order_id <> 'Order ID'
+AND COALESCE(JanSales.orderID,
+ JanSales.Product, 
+ JanSales.Quantity,
+ JanSales.price,
+ JanSales.orderdate,
+ JanSales.location) IS NOT NULL
+GROUP BY JanSales.product;
+
+--Which products were sold in February at 548 Lincoln St, Seattle, WA 98101?
+-- How many of each were sold, and what was the total revenue?
+SELECT FebSales.product, FebSales.Quantity, FebSales.Quantity*FebSales.price as total_revenue
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.FebSales
+ON customers.order_id = FebSales.orderID
+WHERE LENGTH(order_id) = 6
+AND FebSales.location = '548 Lincoln St, Seattle, WA 98101'
+AND order_id <> 'Order ID'
+AND COALESCE(FebSales.orderID,
+ FebSales.Product, 
+ FebSales.Quantity,
+ FebSales.price,
+ FebSales.orderdate,
+ FebSales.location) IS NOT NULL
+GROUP BY FebSales.location;
+
+-- How many customers ordered more than 2 products at a time in February?
+-- What was the average amount spent for those customers?
+SELECT COUNT(customers.acctnum) as multi_customers, ROUND(AVG(FebSales.Quantity* FebSales.Price),2) as Avg_spent
+FROM BIT_DB.customers
+LEFT JOIN BIT_DB.FebSales
+ON customers.order_id = FebSales.orderID
+WHERE LENGTH(order_id) = 6
+AND FebSales.Quantity > 2
+AND order_id <> 'Order ID'
+AND COALESCE(FebSales.orderID,
+ FebSales.Product, 
+ FebSales.Quantity,
+ FebSales.price,
+ FebSales.orderdate,
+ FebSales.location) IS NOT NULL;
+ 
