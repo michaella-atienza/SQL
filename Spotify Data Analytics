@@ -1,0 +1,67 @@
+SELECT * FROM BIT_DB.Spotifydata;
+
+-- Average duration in minutes
+SELECT AVG(duration_ms)/1000/60
+FROM BIT_DB.Spotifydata;
+
+-- Count the number of songs in each time signature category.
+SELECT Spotifydata.time_signature ,COUNT(*) 
+FROM BIT_DB.Spotifydata
+GROUP BY Spotifydata.time_signature;
+
+--List the artists and their respective average danceability scores.
+SELECT Spotifydata.artist_name ,AVG(danceability)
+FROM BIT_DB.Spotifydata
+GROUP BY Spotifydata.artist_name
+ORDER BY AVG(danceability) DESC
+LIMIT 10; 
+
+-- Find the track with the lowest energy score among songs by Olivia Rodrigo.
+SELECT Spotifydata.track_name , Spotifydata.energy
+FROM BIT_DB.Spotifydata
+WHERE Spotifydata.artist_name == 'Olivia Rodrigo'
+ORDER BY energy 
+LIMIT 1; 
+
+-- List the artists who have more than two songs in the dataset.
+SELECT artist_name, COUNT(Spotifydata.artist_name) as num_of_songs
+FROM BIT_DB.Spotifydata
+GROUP BY Spotifydata.artist_name
+HAVING COUNT(Spotifydata.artist_name) > 2
+ORDER BY num_of_songs DESC, artist_name;
+
+-- Find the top three tracks with the lowest acousticness score among songs with a loudness less than -7.
+SELECT Spotifydata.artist_name, Spotifydata.track_name, Spotifydata.acousticness, Spotifydata.loudness
+FROM BIT_DB.Spotifydata
+WHERE Spotifydata.loudness < -8
+ORDER BY Spotifydata.acousticness, Spotifydata.loudness
+LIMIT 3; 
+
+-- Amount of major and minor songs
+SELECT 
+ CASE
+    WHEN Spotifydata.song_mode = 0 THEN 'Minor'
+    ELSE 'Major'
+    END AS song_type,
+COUNT(*)
+FROM BIT_DB.Spotifydata
+GROUP BY Spotifydata.song_mode;
+
+
+--  Calculate the total number of songs in the dataset for each energy level ('high,' 'low,' and 'mid').
+SELECT 
+  energy_level,
+  COUNT(*) AS total_songs
+FROM (
+  SELECT 
+    *, 
+    CASE 
+      WHEN Spotifydata.energy > 0.7 THEN 'high'
+      WHEN Spotifydata.energy < 0.5 THEN 'low'
+      ELSE 'mid'
+    END AS energy_level
+  FROM BIT_DB.Spotifydata
+) AS subquery
+GROUP BY energy_level
+ORDER BY -total_songs;
+
