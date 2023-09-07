@@ -1,3 +1,7 @@
+# This is a SQL exploratory data analysis of the Spotify Top 50 Songs in 2021 from Kaggle 
+# Data Source: https://www.kaggle.com/datasets/equinxx/spotify-top-50-songs-in-2021?resource=download
+
+
 SELECT * FROM BIT_DB.Spotifydata;
 
 -- Average duration in minutes
